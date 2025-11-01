@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Theme {
+  id                 Int                 @id @default(autoincrement())
+  name               String              @unique
+  createdAt          DateTime            @default(now()) @map("created_at")
+  uiConfigurations   UIConfiguration[]
+
+  @@map("Theme")
+}
+
+model UIConfiguration {
+  id              Int      @id @default(autoincrement())
+  businessId      String   @unique @map("business_id")
+  brand           String?  
+  logo            String?
+  font            String?  @default("Inter")
+  fontSize        Int?     @default(16) @map("font_size")
+  imageCarousel   String[] @map("image_carousel")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  themeId         Int      @map("theme_id")
+  theme           Theme    @relation(fields: [themeId], references: [id])
+
+  @@index([businessId])
+  @@map("UI_Configuration")
+}
